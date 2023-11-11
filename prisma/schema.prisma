@@ -6,14 +6,45 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-//exemplo
-model News {
-  id        Int      @id @default(autoincrement())
-  title     String
-  text      String
-  author    String
-  firstHand Boolean  @default(false)
-  createAt  DateTime @default(now())
 
-  @@map("news")
+model Participant {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  balance   Int
+  Bet       Bet[]
+
+  @@map("participants")
+}
+
+model Game {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  homeTeamName  String
+  awayTeamName  String
+  homeTeamScore Int
+  awayTeamScore Int
+  isFinished    Boolean
+  Bet           Bet[]
+
+  @@map("games")
+}
+
+model Bet {
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  homeTeamScore Int
+  awayTeamScore Int
+  amountBet     Int
+  game          Game        @relation(fields: [gameId], references: [id])
+  gameId        Int
+  participant   Participant @relation(fields: [participantId], references: [id])
+  participantId Int
+  status        String
+  amountWon     Int?
+
+  @@map("bets")
 }

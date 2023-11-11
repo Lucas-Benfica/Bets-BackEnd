@@ -5,11 +5,6 @@
     "module": "CommonJS",
     "moduleResolution": "Node",
     "baseUrl": "src",
-    "paths": {
-      "@/*": [
-        "*"
-      ]
-    }
   },
   "ts-node": {
     "esm": true
