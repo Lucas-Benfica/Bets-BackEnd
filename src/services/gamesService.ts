@@ -25,9 +25,10 @@ async function getGamesById(gameId: number): Promise<Game>{
 }
 
 async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: number): Promise<Game> {
+    const validId = await gamesRepository.getGamesById(gameId);
+    if(!validId) throw NotFoundError("The game with this id does not exist.");
+    
     const game = await gamesRepository.finishGame(gameId, homeTeamScore, awayTeamScore);
-
-    if(!game) throw NotFoundError("The game with this id does not exist.");
 
     const bets = game.bets;
 

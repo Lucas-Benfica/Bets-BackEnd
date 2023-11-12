@@ -2,7 +2,7 @@ import supertest from "supertest";
 import app from "../src/app";
 import { cleanDb } from "./services/helpers";
 import httpStatus from "http-status";
-import { createGameInfo, createGameWithBets, createManyGames } from "./factories/games-factory";
+import { createGameInfo, createGameWithBets, createManyGames, createGame } from "./factories/games-factory";
 
 const api = supertest(app);
 
@@ -74,7 +74,10 @@ describe("GET /games", () => {
 })
 
 describe("/GET/:id", () => {
-    
+    it("Should return 404 when game id don't exist.", async () => {
+        const response = await api.get('/games/1');
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
+    })
     it("Should return the game with the id sent and empty bets array.", async () => {
         const info = createGameInfo()
         const game = await api.post('/games').send(info);
@@ -91,8 +94,6 @@ describe("/GET/:id", () => {
         const game = await createGameWithBets();
 
         const response = await api.get(`/games/${game.id}`);
-
-        console.log("Aqui estou eu", response.body);
 
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toEqual(
@@ -122,5 +123,41 @@ describe("/GET/:id", () => {
             }),
         );
 
+    })
+})
+
+describe("POST /games/:id/finish", () => {
+    it("Should return 404 when game id don't exist.", async () => {
+        const response = await api.post('/games/1/finish').send({
+            homeTeamScore: 1,
+            awayTeamScore: 1,
+        });
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
+    describe("When id is valid:", () => {
+        it("Should return a game with a empty bets array", async () => {
+            const game = await createGame();
+            
+            const response = await api.post(`/games/${game.id}/finish`).send({
+                homeTeamScore: 1,
+                awayTeamScore: 1,
+            });
+            expect(response.status).toBe(httpStatus.OK);
+            expect(response.body).toMatchObject({
+                ...game,
+                createdAt: expect.any(String),
+                updatedAt: expect.any(String),
+                homeTeamScore: 1,
+                awayTeamScore: 1,
+                isFinished: true,
+                bets: []
+            });
+        });
+        it("Should update the bets registered for the game.", async () => {
+            
+        });
+        it("Should update participants with bets registered for the game.",async () => {
+            
+        })
     })
 })
