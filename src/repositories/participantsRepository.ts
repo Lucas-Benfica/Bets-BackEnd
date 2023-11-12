@@ -1,6 +1,6 @@
 import prisma from "database/database";
 import { Participant } from "@prisma/client";
-import { createParticipantType } from "schemas/participantsSchema";
+import { createParticipantType, updateParticipantType } from "schemas/participantsSchema";
 
 async function createParticipant (participantInfo: createParticipantType): Promise<Participant>{
     const result = await prisma.participant.create({
@@ -21,12 +21,14 @@ async function updateParticipant(participantId: number, newBalance: number ) {
         }
     })
 }
-async function resultOfParticipantsBets(participantAfterBet: Participant[]) {
+async function resultOfParticipantsBets(participantAfterBet: updateParticipantType[]) {
     const updateManyData = participantAfterBet.map((participant) => ({
         where: { id: participant.id },
         data: {
             updatedAt: new Date(),
-            balance: participant.balance,
+            balance: {
+                increment: participant.amountWon,
+            },
         },
     }));
 
