@@ -31,7 +31,7 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
 
     const bets = game.Bet;
 
-    if(bets.length === 0) return game;
+    if(bets.length === 0) return await gamesRepository.getGamesById(gameId);
 
     let sumOfBetsWon = 0;
     let sumOfAllBets = 0;
