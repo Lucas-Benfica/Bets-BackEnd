@@ -29,7 +29,7 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
 
     if(!game) throw NotFoundError("The game with this id does not exist.");
 
-    const bets = game.Bet;
+    const bets = game.bets;
 
     if(bets.length === 0) return await gamesRepository.getGamesById(gameId);
 

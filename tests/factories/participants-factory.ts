@@ -1,6 +1,7 @@
 import prisma from "../../src/database/database";
 import { faker } from '@faker-js/faker';
 import { createParticipantType } from "../../src/schemas/participantsSchema";
+import { Participant } from "@prisma/client";
 
 export function createParticipantInfo(): createParticipantType {
     return {
@@ -21,13 +22,11 @@ export async function createManyParticipants(numberOfParticipants: number): Prom
     });
     return;
 }
-
-
-/*
-return await prisma.participant.create({
+export async function createParticipant(): Promise<Participant> {
+    return await prisma.participant.create({
         data:{
             name: faker.internet.userName(),
-            balance: faker.number.int({ min: 1000 })
+            balance: faker.number.int({ min: 1000, max: 500000 })
         }
     })
-    */
+}

@@ -1,6 +1,5 @@
 import supertest from "supertest";
 import app from "../src/app";
-import prisma from "../src/database/database";
 import { cleanDb } from "./services/helpers";
 import httpStatus from "http-status";
 import { createManyParticipants, createParticipantInfo } from "./factories/participants-factory";
@@ -45,8 +44,6 @@ describe("POST /participants", () => {
 describe("GET /participants", () => {
     it("should return an empty array if there are no registered participants.",async () => {
         const response = await api.get('/participants');
-        console.log("AQUIIIIIIIIIIIIIIIIII", response.body);
-        console.log(response.body);
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toStrictEqual([]);
     });

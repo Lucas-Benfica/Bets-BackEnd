@@ -13,7 +13,7 @@ model Participant {
   updatedAt DateTime @updatedAt
   name      String
   balance   Int
-  Bet       Bet[]
+  bets       Bet[]
 
   @@map("participants")
 }
@@ -27,7 +27,7 @@ model Game {
   homeTeamScore Int      @default(0)
   awayTeamScore Int      @default(0)
   isFinished    Boolean  @default(false)
-  Bet           Bet[]
+  bets           Bet[]
 
   @@map("games")
 }
