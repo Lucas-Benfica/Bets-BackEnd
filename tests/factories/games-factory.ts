@@ -1,7 +1,7 @@
 import { Game } from "@prisma/client";
 import prisma from "../../src/database/database";
 import { faker } from '@faker-js/faker';
-import { createGamesType } from "schemas/gamesSchema";
+import { createGamesType, updateGamesType } from "schemas/gamesSchema";
 import { createParticipant } from "./participants-factory";
 import { createBet } from "./bets-factory";
 
@@ -45,4 +45,10 @@ export async function createGameWithBets(): Promise<Game> {
     const bet2 = await createBet(game.id, participant2.id);
 
     return game;
+}
+export function updateGameInfo(): updateGamesType {
+    return {
+        homeTeamScore: faker.number.int({ min: 0, max: 3 }),
+        awayTeamScore: faker.number.int({ min: 0, max: 3 }),
+    }
 }
