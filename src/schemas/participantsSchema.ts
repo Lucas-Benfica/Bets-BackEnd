@@ -5,7 +5,7 @@ export type createParticipantType = {
     balance: number
 }
 
-export const partivipantsSchema = Joi.object<createParticipantType>({
+export const participantsSchema = Joi.object<createParticipantType>({
     name: Joi.string().required(),
     balance: Joi.number().required()
 })

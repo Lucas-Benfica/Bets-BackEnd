@@ -24,9 +24,9 @@ model Game {
   updatedAt     DateTime @updatedAt
   homeTeamName  String
   awayTeamName  String
-  homeTeamScore Int
-  awayTeamScore Int
-  isFinished    Boolean
+  homeTeamScore Int      @default(0)
+  awayTeamScore Int      @default(0)
+  isFinished    Boolean  @default(false)
   Bet           Bet[]
 
   @@map("games")
@@ -43,7 +43,7 @@ model Bet {
   gameId        Int
   participant   Participant @relation(fields: [participantId], references: [id])
   participantId Int
-  status        String
+  status        String      @default("PENDING")
   amountWon     Int?
 
   @@map("bets")
