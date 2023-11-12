@@ -12,11 +12,21 @@ async function getParticipants(): Promise<Participant[]> {
     const result = await prisma.participant.findMany();
     return result;
 }
-async function updateParticipant(participantId: number, newBalance: number ) {
+async function getParticipantsById(participantId: number): Promise<Participant> {
+    const result = await prisma.participant.findUnique({
+        where:{
+            id: participantId
+        }
+    });
+    return result;
+}
+async function updateParticipant(participantId: number, amountBet: number ) {
     await prisma.participant.update({
         where: { id: participantId },
         data: {
-            balance: newBalance,
+            balance: {
+                decrement: amountBet
+            },
             updatedAt: new Date()
         }
     })
@@ -39,7 +49,7 @@ async function resultOfParticipantsBets(participantAfterBet: updateParticipantTy
 }
 
 const participantsRepository = {
-    createParticipant, getParticipants, updateParticipant, resultOfParticipantsBets
+    createParticipant, getParticipants, getParticipantsById, updateParticipant, resultOfParticipantsBets
 }
 
 export default participantsRepository;
