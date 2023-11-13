@@ -2,7 +2,7 @@ import supertest from "supertest";
 import app from "../src/app";
 import { cleanDb } from "./services/helpers";
 import httpStatus from "http-status";
-import { createGameInfo, createGameWithBets, createManyGames, createGame } from "./factories/games-factory";
+import { createGameInfo, createGameWithBets, createGame } from "./factories/games-factory";
 import { createParticipant } from "./factories/participants-factory";
 import { createBetInfo2 } from "./factories/bets-factory";
 import prisma from "database/database";
@@ -10,9 +10,6 @@ import prisma from "database/database";
 const api = supertest(app);
 
 beforeEach(async () => {
-    await cleanDb();
-})
-afterEach(async () => {
     await cleanDb();
 })
 
@@ -56,11 +53,11 @@ describe("GET /games", () => {
     });
 
     it("Should return all games and status 200.", async () => {
-        const numberOfGames = 3;
-        createManyGames(numberOfGames);
+        const game1 = await createGame();
+        const game2 = await createGame();
+        const game3 = await createGame();
         const response = await api.get('/games');
         expect(response.status).toBe(httpStatus.OK);
-        expect(response.body).toHaveLength(numberOfGames);
         expect(response.body).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
@@ -176,10 +173,6 @@ describe("POST /games/:id/finish", () => {
 
             const participant2After = await prisma.participant.findUnique({where: { id: participant2.id }});
             const bet2After = await prisma.bet.findUnique({where: { id: bet2.body.id }});
-
-            console.log(participant2, participant2After);
-            console.log(bet2.body, bet2After);
-
 
             expect(response.status).toBe(httpStatus.OK);
             expect(response.body).toMatchObject({

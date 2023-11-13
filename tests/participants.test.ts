@@ -6,13 +6,7 @@ import { createParticipant, createParticipantInfo } from "./factories/participan
 
 const api = supertest(app);
 
-beforeAll(async () => {
-    await cleanDb();
-});
 beforeEach(async () => {
-    await cleanDb();
-})
-afterEach(async () => {
     await cleanDb();
 })
 
@@ -58,7 +52,6 @@ describe("GET /participants", () => {
         await createParticipant();
         await createParticipant();
         const response = await api.get('/participants');
-        console.log(" all participants",response.body);
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toEqual(
             expect.arrayContaining([

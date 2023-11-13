@@ -82,7 +82,6 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
             }
         }
     })
-    console.log(betsParticipants);
 
     await betsRepository.finishBets(betsAfterGame);
     await participantsRepository.resultOfParticipantsBets(betsParticipants);

@@ -8,12 +8,6 @@ export function handleApplicationErrors(
     res: Response,
     next: NextFunction,
 ) {
-    if (err.name === 'ConflictError') {
-        return res.status(httpStatus.CONFLICT).send({
-            message: err.message,
-        });
-    }
-
     if (err.name === 'InvalidDataError') {
         return res.status(httpStatus.BAD_REQUEST).send({
             message: err.message,

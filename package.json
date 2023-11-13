@@ -8,11 +8,13 @@
   },
   "scripts": {
     "build": "tsc",
+    "seed": "prisma db seed",
+    "migration:prod": "prisma migrate deploy",
+    "start": "npm run migration:prod && npm run seed && node dist/src/server.js",
+    "dev": "nodemon src/server.ts",
     "test:load-envs": "dotenv -e .env.test",
-    "test": "npm run test:load-envs jest",
-    "test:migration:run": "npm run test:load-envs prisma migrate deploy",
-    "start": "node dist/server.js",
-    "dev": "nodemon src/server.ts"
+    "test": "npm run test:load-envs -- jest -- --coverage --runInBand",
+    "test:migration:run": "npm run test:load-envs prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
