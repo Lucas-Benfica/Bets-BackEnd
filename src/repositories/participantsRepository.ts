@@ -32,21 +32,23 @@ async function updateParticipant(participantId: number, amountBet: number ) {
     })
 }
 async function resultOfParticipantsBets(participantAfterBet: updateParticipantType[]) {
-    const updateManyData = participantAfterBet.map((participant) => ({
-        where: { id: participant.id },
+    for (const participant of participantAfterBet) {
+        await updateWithBet(participant.id, participant.amountWon);
+    }
+}
+
+async function updateWithBet(participantId: number, amountWon: number) {
+    await prisma.participant.update({
+        where: { id: participantId },
         data: {
             updatedAt: new Date(),
             balance: {
-                increment: participant.amountWon,
+                increment: amountWon,
             },
         },
-    }));
-
-
-    await prisma.participant.updateMany({
-        data: updateManyData,
     });
 }
+
 
 const participantsRepository = {
     createParticipant, getParticipants, getParticipantsById, updateParticipant, resultOfParticipantsBets

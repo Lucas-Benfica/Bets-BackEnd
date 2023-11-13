@@ -1,4 +1,5 @@
 import { Bet, Game } from "@prisma/client";
+import prisma from "database/database";
 import { InvalidDataError } from "errors/InvalidDataError";
 import { NotFoundError } from "errors/NotFoundError";
 import betsRepository from "repositories/betsRepository";
@@ -32,7 +33,7 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
 
     const bets = game.bets;
 
-    if(bets.length === 0) return await gamesRepository.getGamesById(gameId);
+    if(bets.length === 0) return game;
 
     let sumOfBetsWon = 0;
     let sumOfAllBets = 0;
@@ -42,7 +43,7 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
         let newStatus = "PENDING";
 
         sumOfAllBets += bet.amountBet;
-
+        
         if(bet.homeTeamScore === homeTeamScore && bet.awayTeamScore === awayTeamScore){
             newStatus = "WON";
             sumOfBetsWon += bet.amountBet;
@@ -57,22 +58,23 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
         }
     });
     
-    const winners = [];
+    const betsParticipants = [];
 
     betsAfterGame = betsAfterGame.map( bet => {
         let newAmount = 0;
 
         if(bet.status === "LOST"){
+            betsParticipants.push({id: bet.participantId, amountWon: 0});
+
             return {
                 ...bet,
                 amountWon: 0
             }
         }
         else if(bet.status === "WON"){
-            
             newAmount = Math.floor((bet.amountBet / sumOfBetsWon) * (sumOfAllBets) * (1 - tax));
 
-            winners.push({id: bet.participantId, balance: newAmount});
+            betsParticipants.push({id: bet.participantId, amountWon: newAmount});
 
             return {
                 ...bet,
@@ -80,11 +82,12 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
             }
         }
     })
+    console.log(betsParticipants);
 
     await betsRepository.finishBets(betsAfterGame);
-    await participantsRepository.resultOfParticipantsBets(winners);
+    await participantsRepository.resultOfParticipantsBets(betsParticipants);
 
-    return await gamesRepository.getGamesById(gameId);
+    return await prisma.game.findUnique({where: {id: game.id}, include: {bets: true}});
 }
 
 const gamesService = {

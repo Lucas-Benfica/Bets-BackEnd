@@ -10,20 +10,23 @@ async function createBet(betInfo: createBetsType) {
 }
 
 async function finishBets(gameBets: Bet[]) {
-    const updateManyData = gameBets.map((bet) => ({
-        where: { id: bet.id },
+    for (const bet of gameBets) {
+        await updateBet(bet.id, bet.status, bet.amountWon);
+    }
+}
+
+async function updateBet(betId: number, status: string, amountWon: number) {
+    await prisma.bet.update({
+        where: { id: betId },
         data: {
             updatedAt: new Date(),
-            status: bet.status,
-            amountWon: bet.amountWon
+            status: status,
+            amountWon: amountWon,
         },
-    }));
-
-
-    await prisma.bet.updateMany({
-        data: updateManyData,
     });
 }
+
+
 
 const betsRepository = {
     createBet, finishBets

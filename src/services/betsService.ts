@@ -20,6 +20,7 @@ async function createBet(betInfo: createBetsType) {
     if(participant.balance < betInfo.amountBet) throw InvalidDataError(`
     The bet amount must be less than or equal to the participant's balance. Balance: ${participant.balance}, amountBet: ${betInfo.amountBet}.
     `)
+    await participantsRepository.updateParticipant(participant.id, betInfo.amountBet);
 
     return await betsRepository.createBet(betInfo);
 }

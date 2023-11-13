@@ -3,7 +3,6 @@ import participantsRepository from "repositories/participantsRepository";
 import { createParticipantType } from "schemas/participantsSchema";
 
 function createParticipant(participantInfo: createParticipantType){
-    console.log(participantInfo);
     if(participantInfo.balance < 1000) throw InvalidDataError("The balance must be greater than R$10.00");
 
     return participantsRepository.createParticipant(participantInfo);

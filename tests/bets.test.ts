@@ -2,9 +2,10 @@ import supertest from "supertest";
 import app from "../src/app";
 import { cleanDb } from "./services/helpers";
 import httpStatus from "http-status";
-import { createGameInfo, createGameWithBets, createManyGames, createGame, updateGameInfo } from "./factories/games-factory";
+import { createGame, updateGameInfo } from "./factories/games-factory";
 import { createBetInfo } from "./factories/bets-factory";
 import { createParticipant } from "./factories/participants-factory";
+import prisma from "database/database";
 
 const api = supertest(app);
 
@@ -65,6 +66,20 @@ describe("POST /bets", () => {
 
             expect(response.status).toBe(httpStatus.BAD_REQUEST);
         });
+        it("Should subtract the bet amount from the participant's balance.", async () => {
+            const participant = await createParticipant();
+            const game = await createGame();
+
+            const bet = createBetInfo(game.id, participant.id);
+            const response = await api.post('/bets').send(bet);
+
+            const participantAfterBet = await prisma.participant.findUnique({
+                where:{id: participant.id}
+            });
+
+            expect(response.status).toBe(httpStatus.CREATED);
+            expect(participantAfterBet.balance).toBe(participant.balance - bet.amountBet);
+        });
         it("Should return the bet information.", async () => {
             const participant = await createParticipant();
             const game = await createGame();
@@ -85,6 +100,6 @@ describe("POST /bets", () => {
                     status: "PENDING",
                     amountWon: null,
                 }))
-        })
+        });
     })
 })

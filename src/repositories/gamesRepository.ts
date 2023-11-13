@@ -15,13 +15,7 @@ async function getGames(): Promise<Game[]> {
 }
 
 async function getGamesById(gameId: number): Promise<Game> {
-    const result = await prisma.game.findUnique({
-        where: { id: gameId },
-        include: {
-            bets: true
-        }
-    });
-    return result;
+    return await prisma.game.findUnique({where: {id: gameId}, include: {bets: true}});
 }
 
 async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: number) {
@@ -33,7 +27,7 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
             awayTeamScore,
         },
     });
-    const result = prisma.game.findUnique({
+    const result = await prisma.game.findUnique({
         where: { id: gameId },
         include: { bets: true }
     });

@@ -3,10 +3,16 @@ import app from "../src/app";
 import { cleanDb } from "./services/helpers";
 import httpStatus from "http-status";
 import { createGameInfo, createGameWithBets, createManyGames, createGame } from "./factories/games-factory";
+import { createParticipant } from "./factories/participants-factory";
+import { createBetInfo2 } from "./factories/bets-factory";
+import prisma from "database/database";
 
 const api = supertest(app);
 
 beforeEach(async () => {
+    await cleanDb();
+})
+afterEach(async () => {
     await cleanDb();
 })
 
@@ -45,7 +51,6 @@ describe("POST /games", () => {
 describe("GET /games", () => {
     it("should return an empty array if there are no registered games.", async () => {
         const response = await api.get('/games');
-        console.log(response.body);
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toStrictEqual([]);
     });
@@ -153,11 +158,54 @@ describe("POST /games/:id/finish", () => {
                 bets: []
             });
         });
-        it("Should update the bets registered for the game.", async () => {
-            
-        });
-        it("Should update participants with bets registered for the game.",async () => {
-            
-        })
+        it("Should return status 200, update the bets and participants & return the game finished.", async () => {
+            const participant1 = await createParticipant();
+            const participant2 = await createParticipant();
+            const participant3 = await createParticipant();
+
+            const game = await createGame();
+
+            const bet1 = await api.post("/bets").send(createBetInfo2(game.id, participant1.id, 1000, 2,2));
+            const bet2 = await api.post("/bets").send(createBetInfo2(game.id, participant2.id, 2000, 2,2));
+            const bet3 = await api.post("/bets").send(createBetInfo2(game.id, participant3.id, 3000, 3,1));
+
+            const response = await api.post(`/games/${game.id}/finish`).send({
+                homeTeamScore: 2,
+                awayTeamScore: 2,
+            });
+
+            const participant2After = await prisma.participant.findUnique({where: { id: participant2.id }});
+            const bet2After = await prisma.bet.findUnique({where: { id: bet2.body.id }});
+
+            console.log(participant2, participant2After);
+            console.log(bet2.body, bet2After);
+
+
+            expect(response.status).toBe(httpStatus.OK);
+            expect(response.body).toMatchObject({
+                ...game,
+                createdAt: expect.any(String),
+                updatedAt: expect.any(String),
+                homeTeamScore: 2,
+                awayTeamScore: 2,
+                isFinished: true,
+                bets: expect.arrayContaining([
+                  expect.objectContaining({
+                    amountBet: expect.any(Number),
+                    amountWon: expect.any(Number),
+                    awayTeamScore: expect.any(Number),
+                    createdAt: expect.any(String),
+                    gameId: expect.any(Number),
+                    homeTeamScore: expect.any(Number),
+                    id: expect.any(Number),
+                    participantId: expect.any(Number),
+                    status: expect.any(String),
+                    updatedAt: expect.any(String),
+                  }),
+                ]),
+            });
+            expect(participant2After.balance).toBe(participant2.balance - bet2.body.amountBet + bet2After.amountWon);
+            expect(bet2After.amountWon).toBe(2800);
+        });            
     })
 })
