@@ -1,6 +1,6 @@
-import prisma from "database/database";
+import prisma from "../database/database";
 import { Bet } from "@prisma/client";
-import { createBetsType } from "schemas/betsSchema";
+import { createBetsType } from "../schemas/betsSchema";
 
 async function createBet(betInfo: createBetsType) {
     const result = await prisma.bet.create({

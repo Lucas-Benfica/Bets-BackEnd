@@ -1,11 +1,11 @@
 import { Bet, Game } from "@prisma/client";
-import prisma from "database/database";
-import { InvalidDataError } from "errors/InvalidDataError";
-import { NotFoundError } from "errors/NotFoundError";
-import betsRepository from "repositories/betsRepository";
-import gamesRepository from "repositories/gamesRepository";
-import participantsRepository from "repositories/participantsRepository";
-import { createGamesType } from "schemas/gamesSchema";
+import prisma from "../database/database";
+import { InvalidDataError } from "../errors/InvalidDataError";
+import { NotFoundError } from "../errors/NotFoundError";
+import betsRepository from "../repositories/betsRepository";
+import gamesRepository from "../repositories/gamesRepository";
+import participantsRepository from "../repositories/participantsRepository";
+import { createGamesType } from "../schemas/gamesSchema";
 
 async function createGame(gameData: createGamesType): Promise<Game> {
     if(!gameData) throw InvalidDataError("Game information must be submitted.");
