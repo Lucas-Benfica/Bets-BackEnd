@@ -4,11 +4,11 @@ import { faker } from '@faker-js/faker';
 import { createBetsType } from "schemas/betsSchema";
 import participantsRepository from "../../src/repositories/participantsRepository";
 
-export function createBetInfo(gameId: number, participantId: number): createBetsType {
+export function createBetInfo(gameId: number, participantId: number, amountBet: number = 1000): createBetsType {
     return {
         homeTeamScore: faker.number.int({ min: 0, max: 2 }),
 	    awayTeamScore: faker.number.int({ min: 0, max: 2 }), 
-	    amountBet: 1000,
+	    amountBet: amountBet,
 	    gameId: gameId,
 	    participantId: participantId,
     }

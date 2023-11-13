@@ -11,6 +11,7 @@ async function createBet(betInfo: createBetsType) {
     const { gameId, participantId } = betInfo;
 
     const game = await gamesRepository.getGamesById(gameId);
+    console.log("game ta aqui existe", game);
     if(!game) throw NotFoundError(`The game with id: ${gameId} was not found.`);
     if(game.isFinished) throw InvalidDataError(`The game with id: ${gameId} has already been completed.`);
 

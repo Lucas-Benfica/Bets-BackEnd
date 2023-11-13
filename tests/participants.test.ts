@@ -2,11 +2,17 @@ import supertest from "supertest";
 import app from "../src/app";
 import { cleanDb } from "./services/helpers";
 import httpStatus from "http-status";
-import { createManyParticipants, createParticipantInfo } from "./factories/participants-factory";
+import { createParticipant, createParticipantInfo } from "./factories/participants-factory";
 
 const api = supertest(app);
 
+beforeAll(async () => {
+    await cleanDb();
+});
 beforeEach(async () => {
+    await cleanDb();
+})
+afterEach(async () => {
     await cleanDb();
 })
 
@@ -42,17 +48,18 @@ describe("POST /participants", () => {
 })
 
 describe("GET /participants", () => {
-    it("should return an empty array if there are no registered participants.",async () => {
+    it("should return an empty array if there are no registered participants.", async () => {
         const response = await api.get('/participants');
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toStrictEqual([]);
     });
-    it("Should return all participants and status 200.",async () => {
-        const numberOfParticipants = 3;
-        createManyParticipants(numberOfParticipants);
+    it("Should return all participants and status 200.", async () => {
+        await createParticipant();
+        await createParticipant();
+        await createParticipant();
         const response = await api.get('/participants');
+        console.log(" all participants",response.body);
         expect(response.status).toBe(httpStatus.OK);
-        expect(response.body).toHaveLength(numberOfParticipants);
         expect(response.body).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({

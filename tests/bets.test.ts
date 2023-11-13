@@ -12,6 +12,9 @@ const api = supertest(app);
 beforeEach(async () => {
     await cleanDb();
 })
+afterEach(async () => {
+    await cleanDb();
+})
 
 describe("POST /bets", () => {
     it("Should respond with status 400 when body is not given", async () => {
@@ -58,9 +61,7 @@ describe("POST /bets", () => {
             const participant = await createParticipant();
             const game = await createGame();
 
-            const bet = createBetInfo(game.id, participant.id);
-
-            bet.amountBet = participant.balance + 1000;
+            const bet = createBetInfo(game.id, participant.id, participant.balance + 1000);
 
             const response = await api.post('/bets').send(bet);
 

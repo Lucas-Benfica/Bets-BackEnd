@@ -3,8 +3,15 @@ import { Bet } from "@prisma/client";
 import { createBetsType } from "schemas/betsSchema";
 
 async function createBet(betInfo: createBetsType) {
+    console.log("INFORMAÇÃO AQUI", betInfo.gameId);
     const result = await prisma.bet.create({
-        data: betInfo
+        data: {
+            homeTeamScore: betInfo.homeTeamScore,
+            awayTeamScore: betInfo.awayTeamScore,
+            amountBet: betInfo.amountBet,
+            gameId: betInfo.gameId,
+            participantId: betInfo.participantId,
+        }
     });
     return result;
 }
