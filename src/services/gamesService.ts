@@ -1,5 +1,4 @@
 import { Bet, Game } from "@prisma/client";
-import prisma from "../database/database";
 import { InvalidDataError } from "../errors/InvalidDataError";
 import { NotFoundError } from "../errors/NotFoundError";
 import betsRepository from "../repositories/betsRepository";
@@ -86,7 +85,7 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
     await betsRepository.finishBets(betsAfterGame);
     await participantsRepository.resultOfParticipantsBets(betsParticipants);
 
-    return await prisma.game.findUnique({where: {id: game.id}, include: {bets: true}});
+    return await gamesRepository.getGamesById(gameId);
 }
 
 const gamesService = {
