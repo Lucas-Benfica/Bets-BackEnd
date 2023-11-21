@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import gamesService from "services/gamesService";
+import gamesService from "../services/gamesService";
 
 async function createGame(req: Request, res: Response) {
     const newGame = await gamesService.createGame(req.body)

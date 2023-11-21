@@ -1,6 +1,6 @@
-import { InvalidDataError } from "errors/InvalidDataError";
-import participantsRepository from "repositories/participantsRepository";
-import { createParticipantType } from "schemas/participantsSchema";
+import { InvalidDataError } from "../errors/InvalidDataError";
+import participantsRepository from "../repositories/participantsRepository";
+import { createParticipantType } from "../schemas/participantsSchema";
 
 function createParticipant(participantInfo: createParticipantType){
     if(participantInfo.balance < 1000) throw InvalidDataError("The balance must be greater than R$10.00");

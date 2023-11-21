@@ -1,7 +1,7 @@
-import participantsController from "controllers/participantsController";
+import participantsController from "../controllers/participantsController";
 import  Router  from "express";
-import { validateSchema } from "middlewares/schema-handler";
-import { participantsSchema } from "schemas/participantsSchema";
+import { validateSchema } from "../middlewares/schema-handler";
+import { participantsSchema } from "../schemas/participantsSchema";
 
 const participantsRouter = Router();
 

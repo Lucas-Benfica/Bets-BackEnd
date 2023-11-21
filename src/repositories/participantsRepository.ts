@@ -1,6 +1,6 @@
-import prisma from "database/database";
+import prisma from "../database/database";
 import { Participant } from "@prisma/client";
-import { createParticipantType, updateParticipantType } from "schemas/participantsSchema";
+import { createParticipantType, updateParticipantType } from "../schemas/participantsSchema";
 
 async function createParticipant (participantInfo: createParticipantType): Promise<Participant>{
     const result = await prisma.participant.create({

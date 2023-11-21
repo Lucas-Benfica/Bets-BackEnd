@@ -4,17 +4,19 @@ import { createParticipantType } from "../../src/schemas/participantsSchema";
 import { Participant } from "@prisma/client";
 
 export function createParticipantInfo(): createParticipantType {
-    return {
+    const info = {
         name: faker.internet.userName(),
         balance: faker.number.int({ min: 1000, max: 500000 })
     }
+    return info;
 }
 
 export async function createParticipant(): Promise<Participant> {
-    return await prisma.participant.create({
+    const participant = await prisma.participant.create({
         data:{
             name: faker.internet.userName(),
             balance: faker.number.int({ min: 1000, max: 500000 })
         }
     })
+    return participant;
 }

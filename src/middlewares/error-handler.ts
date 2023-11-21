@@ -1,6 +1,6 @@
  import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
-import { ApplicationError, RequestError } from "utils/protocols";
+import { ApplicationError, RequestError } from "../utils/protocols";
 
 export function handleApplicationErrors(
     err: RequestError | ApplicationError | Error,
@@ -8,12 +8,6 @@ export function handleApplicationErrors(
     res: Response,
     next: NextFunction,
 ) {
-    if (err.name === 'ConflictError') {
-        return res.status(httpStatus.CONFLICT).send({
-            message: err.message,
-        });
-    }
-
     if (err.name === 'InvalidDataError') {
         return res.status(httpStatus.BAD_REQUEST).send({
             message: err.message,

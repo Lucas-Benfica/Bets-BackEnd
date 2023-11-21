@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import participantsService from "services/participantsService";
+import participantsService from "../services/participantsService";
 
 async function createParticipant(req: Request, res: Response) {
     const newParticipant = await participantsService.createParticipant(req.body);

@@ -11,10 +11,7 @@ const api = supertest(app);
 
 beforeEach(async () => {
     await cleanDb();
-})
-afterEach(async () => {
-    await cleanDb();
-})
+});
 
 describe("POST /bets", () => {
     it("Should respond with status 400 when body is not given", async () => {
@@ -41,7 +38,9 @@ describe("POST /bets", () => {
             const participant = await createParticipant();
             const game = await createGame();
 
-            await api.post(`/games/${game.id}/finish`).send(updateGameInfo());
+            const updateInfo = updateGameInfo()
+
+            await api.post(`/games/${game.id}/finish`).send(updateInfo);
 
             const bet = createBetInfo(game.id, participant.id);
 
@@ -85,8 +84,9 @@ describe("POST /bets", () => {
             const participant = await createParticipant();
             const game = await createGame();
 
-            const bet = createBetInfo(game.id, participant.id);
+            const bet = createBetInfo(game.id, participant.id, 1000);
             const response = await api.post('/bets').send(bet);
+            console.log(response.status, response.error);
             expect(response.status).toBe(httpStatus.CREATED);
             expect(response.body).toEqual(
                 expect.objectContaining({

@@ -1,7 +1,7 @@
 import express, {json}  from "express";
 import "express-async-errors";
-import { handleApplicationErrors } from "middlewares/error-handler";
-import router from "routers";
+import { handleApplicationErrors } from "./middlewares/error-handler";
+import router from "./routers";
 
 const app = express();
 app.use(json());

@@ -12,9 +12,6 @@ const api = supertest(app);
 beforeEach(async () => {
     await cleanDb();
 })
-afterEach(async () => {
-    await cleanDb();
-})
 
 describe("POST /games", () => {
     it("Should respond with status 400 when body is not given", async () => {
@@ -56,9 +53,9 @@ describe("GET /games", () => {
     });
 
     it("Should return all games and status 200.", async () => {
-        await createGame();
-        await createGame();
-        await createGame();
+        const game1 = await createGame();
+        const game2 = await createGame();
+        const game3 = await createGame();
         const response = await api.get('/games');
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toEqual(
@@ -176,10 +173,6 @@ describe("POST /games/:id/finish", () => {
 
             const participant2After = await prisma.participant.findUnique({where: { id: participant2.id }});
             const bet2After = await prisma.bet.findUnique({where: { id: bet2.body.id }});
-
-            console.log(participant2, participant2After);
-            console.log(bet2.body, bet2After);
-
 
             expect(response.status).toBe(httpStatus.OK);
             expect(response.body).toMatchObject({

@@ -1,6 +1,6 @@
-import prisma from "database/database";
+import prisma from "../database/database";
 import { Game } from "@prisma/client";
-import { createGamesType } from "schemas/gamesSchema";
+import { createGamesType } from "../schemas/gamesSchema";
 
 async function createGame(gameInfo: createGamesType): Promise<Game> {
     const result = await prisma.game.create({

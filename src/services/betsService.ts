@@ -1,9 +1,9 @@
-import { InvalidDataError } from "errors/InvalidDataError";
-import { NotFoundError } from "errors/NotFoundError";
-import betsRepository from "repositories/betsRepository";
-import gamesRepository from "repositories/gamesRepository";
-import participantsRepository from "repositories/participantsRepository";
-import { createBetsType } from "schemas/betsSchema";
+import { InvalidDataError } from "../errors/InvalidDataError";
+import { NotFoundError } from "../errors/NotFoundError";
+import betsRepository from "../repositories/betsRepository";
+import gamesRepository from "../repositories/gamesRepository";
+import participantsRepository from "../repositories/participantsRepository";
+import { createBetsType } from "../schemas/betsSchema";
 
 async function createBet(betInfo: createBetsType) {
     if(!betInfo) throw InvalidDataError("Bet information must be submitted.");

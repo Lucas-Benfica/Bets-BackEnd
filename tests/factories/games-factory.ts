@@ -6,19 +6,20 @@ import { createParticipant } from "./participants-factory";
 import { createBet } from "./bets-factory";
 
 export function createGameInfo(): createGamesType {
-    return {
+    const info = {
         homeTeamName: faker.company.name(),
         awayTeamName: faker.company.name()
     }
+    return info;
 }
-
 export async function createGame(): Promise<Game> {
-    return await prisma.game.create({
+    const game = await prisma.game.create({
         data: {
             homeTeamName: faker.company.name(),
             awayTeamName: faker.company.name()
         }
-    })
+    });
+    return game;
 }
 export async function createGameWithBets(): Promise<Game> {
     const participant1 = await createParticipant();
@@ -29,14 +30,14 @@ export async function createGameWithBets(): Promise<Game> {
             awayTeamName: faker.company.name()
         }
     })
-    const bet1 = await createBet(game.id, participant1.id);
-    const bet2 = await createBet(game.id, participant2.id);
-
+    await createBet(game.id, participant1.id);
+    await createBet(game.id, participant2.id);
     return game;
 }
 export function updateGameInfo(): updateGamesType {
-    return {
+    const info = {
         homeTeamScore: faker.number.int({ min: 0, max: 3 }),
         awayTeamScore: faker.number.int({ min: 0, max: 3 }),
-    }
+    };
+    return info;
 }
