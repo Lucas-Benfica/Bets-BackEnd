@@ -34,6 +34,20 @@ describe("POST /bets", () => {
 
             expect(response.status).toBe(httpStatus.NOT_FOUND);
         });
+        it("Should respond with status 400 when amountBet is equal to 0", async () => {
+            const participant = await createParticipant();
+            let bet = createBetInfo(1,participant.id);
+            bet.amountBet = 0;
+            const response = await api.post('/bets').send(bet);
+            expect(response.status).toBe(httpStatus.BAD_REQUEST);
+        });
+        it("Should respond with status 400 when amountBet is less than 0", async () => {
+            const participant = await createParticipant();
+            let bet = createBetInfo(1,participant.id);
+            bet.amountBet = -5;
+            const response = await api.post('/bets').send(bet);
+            expect(response.status).toBe(httpStatus.BAD_REQUEST);
+        });
         it("Should respond with status 400 when the game has already finished", async () => {
             const participant = await createParticipant();
             const game = await createGame();

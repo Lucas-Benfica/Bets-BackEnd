@@ -137,6 +137,18 @@ describe("POST /games/:id/finish", () => {
         expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
     describe("When id is valid:", () => {
+        it("Should return status 400 when the game is already finished", async () => {
+            const game = await createGame();
+            
+            await api.post(`/games/${game.id}/finish`).send({homeTeamScore: 1,awayTeamScore: 1,});
+
+            const response = await api.post(`/games/${game.id}/finish`).send({
+                homeTeamScore: 2,
+                awayTeamScore: 2,
+            });
+
+            expect(response.status).toBe(httpStatus.BAD_REQUEST);
+        });
         it("Should return a game with a empty bets array", async () => {
             const game = await createGame();
             
