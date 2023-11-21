@@ -11,19 +11,7 @@ export function createGameInfo(): createGamesType {
         awayTeamName: faker.company.name()
     }
 }
-export async function createManyGames(numberOfGames: number): Promise<void> {
-    const gamesData = [];
-    for (let i = 0; i < numberOfGames; i++) {
-        gamesData.push({
-            homeTeamName: faker.company.name(),
-            awayTeamName: faker.company.name()
-        });
-    };
-    await prisma.game.createMany({
-        data: gamesData,
-    });
-    return;
-}
+
 export async function createGame(): Promise<Game> {
     return await prisma.game.create({
         data: {

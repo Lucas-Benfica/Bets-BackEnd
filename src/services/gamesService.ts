@@ -26,24 +26,26 @@ async function getGamesById(gameId: number): Promise<Game>{
 }
 
 async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: number): Promise<Game> {
-    const validId = await gamesRepository.getGamesById(gameId);
-    if(!validId) throw NotFoundError("The game with this id does not exist.");
-    
+    const gameExists = await gamesRepository.getGamesById(gameId);
+    if(!gameExists) throw NotFoundError("The game with this id does not exist.");
+    if(gameExists.isFinished) throw InvalidDataError(`The game with ID=${gameExists.id} is already finished`);
     const game = await gamesRepository.finishGame(gameId, homeTeamScore, awayTeamScore);
-
     const bets = game.bets;
-
     if(bets.length === 0) return game;
 
-    let sumOfBetsWon = 0;
-    let sumOfAllBets = 0;
-    const tax = 0.3;
+    let {betsAfterGame, betsParticipants} = updateStatus(bets, homeTeamScore, awayTeamScore);
 
-    let betsAfterGame: Bet[] = bets.map( bet => {
+    await betsRepository.finishBets(betsAfterGame);
+    await participantsRepository.resultOfParticipantsBets(betsParticipants);
+
+    return await gamesRepository.getGamesById(game.id);
+}
+
+function updateStatus(bets: Bet[], homeTeamScore: number, awayTeamScore: number){
+    let sumOfBetsWon = 0, sumOfAllBets = 0;
+    const betsWithNewStatus = bets.map( bet => {
         let newStatus = "PENDING";
-
         sumOfAllBets += bet.amountBet;
-        
         if(bet.homeTeamScore === homeTeamScore && bet.awayTeamScore === awayTeamScore){
             newStatus = "WON";
             sumOfBetsWon += bet.amountBet;
@@ -51,43 +53,32 @@ async function finishGame(gameId: number, homeTeamScore: number, awayTeamScore: 
         else{
             newStatus = "LOST";
         }
-        
         return {
-            ...bet,
-            status: newStatus,
+            ...bet, status: newStatus,
         }
     });
-    
+    const {betsAfterGame, betsParticipants} = updateAmountWon(betsWithNewStatus, sumOfBetsWon, sumOfAllBets);
+    return {betsAfterGame, betsParticipants};
+} 
+
+function updateAmountWon(bets: Bet[], sumOfBetsWon:number, sumOfAllBets: number){
     const betsParticipants = [];
-
-    betsAfterGame = betsAfterGame.map( bet => {
+    const betsAfterGame = bets.map( bet => {
         let newAmount = 0;
-
         if(bet.status === "LOST"){
             betsParticipants.push({id: bet.participantId, amountWon: 0});
-
-            return {
-                ...bet,
-                amountWon: 0
-            }
+            return { ...bet, amountWon: 0 }
         }
         else if(bet.status === "WON"){
-            newAmount = Math.floor((bet.amountBet / sumOfBetsWon) * (sumOfAllBets) * (1 - tax));
-
+            newAmount = Math.floor((bet.amountBet / sumOfBetsWon) * (sumOfAllBets) * (1 - 0.3));
             betsParticipants.push({id: bet.participantId, amountWon: newAmount});
-
             return {
                 ...bet,
                 amountWon: newAmount
             }
         }
     })
-    console.log(betsParticipants);
-
-    await betsRepository.finishBets(betsAfterGame);
-    await participantsRepository.resultOfParticipantsBets(betsParticipants);
-
-    return await prisma.game.findUnique({where: {id: game.id}, include: {bets: true}});
+    return {betsAfterGame, betsParticipants};
 }
 
 const gamesService = {

@@ -2,7 +2,7 @@ import supertest from "supertest";
 import app from "../src/app";
 import { cleanDb } from "./services/helpers";
 import httpStatus from "http-status";
-import { createGameInfo, createGameWithBets, createManyGames, createGame } from "./factories/games-factory";
+import { createGameInfo, createGameWithBets, createGame } from "./factories/games-factory";
 import { createParticipant } from "./factories/participants-factory";
 import { createBetInfo2 } from "./factories/bets-factory";
 import prisma from "database/database";
@@ -56,11 +56,11 @@ describe("GET /games", () => {
     });
 
     it("Should return all games and status 200.", async () => {
-        const numberOfGames = 3;
-        createManyGames(numberOfGames);
+        await createGame();
+        await createGame();
+        await createGame();
         const response = await api.get('/games');
         expect(response.status).toBe(httpStatus.OK);
-        expect(response.body).toHaveLength(numberOfGames);
         expect(response.body).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({

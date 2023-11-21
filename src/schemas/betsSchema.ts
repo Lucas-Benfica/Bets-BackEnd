@@ -11,7 +11,7 @@ export type createBetsType = {
 export const betsSchema = Joi.object<createBetsType>({ 
 	homeTeamScore: Joi.number().min(0).required(),
 	awayTeamScore: Joi.number().min(0).required(), 
-	amountBet: Joi.number().min(0).required(),
+	amountBet: Joi.number().required(),
 	gameId: Joi.number().min(0).required(), 
 	participantId: Joi.number().min(0).required()
 })
